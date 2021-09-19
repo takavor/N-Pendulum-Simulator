@@ -1,8 +1,15 @@
+// TODO
+/*
+	-drag feature (change mass pos and rod length)
+	-automate with input numb. of masses
+*/
+
 window.onload = function() {
 
 	var canvas = document.getElementById("canvas");
 	canvas.width = 800;
 	canvas.height = 700;
+
 
 	var context = canvas.getContext("2d");
 
@@ -16,10 +23,11 @@ window.onload = function() {
 	}
 
 	// physics variables
-	var numOfMasses = 1;
+	var numOfMasses = 3;
 	var gravity = 0.1;
-	var radius = 15;
-	var bounce = 0.99;
+	var radius = 20;
+	var bounce = 0.95;
+	var springConstant = 0.5;
 
 	select.onchange = function() {
 		numOfMasses = select.value;
@@ -62,6 +70,48 @@ window.onload = function() {
 		prevX: 158,
 		prevY: 470,
 		locked: false
+	});
+
+	// set transparent image as ghost image for dragging
+	canvas.addEventListener("dragstart", function (event) {
+		var dragImg = document.createElement("img");
+		dragImg.src = "images/transparent.png";
+		dragImg.width = canvas.width;
+		event.dataTransfer.setDragImage(dragImg, 0, 0);
+	});
+
+	// implement mouse drag
+	canvas.addEventListener("drag", function (event) {
+		
+		// get pointer position
+		var pointerX = event.clientX;
+		var pointerY = event.clientY;
+
+		// for each mass
+		for(var i = 0; i < masses.length; i++) {
+			var mass = masses[i];
+
+			var distX = pointerX - mass.x;
+			var distY = pointerY - mass.y;
+			var dist = Math.sqrt(distX*distX + distY*distY);
+
+			// check if pointer is within the mass
+			if(dist < radius) {
+				// move the mass with the pointer
+				// pointer may be anywhere inside the mass
+				// add offsets to position of the mass
+				mass.prevX = mass.x;
+				mass.prevY = mass.y;
+				mass.x += distX;
+				mass.y += distY;
+			}
+
+			// update rod connecting this mass and its consecturive mass
+			if(i != 0) {
+				var neighbour = masses[i-1];
+
+			}
+		}
 	});
 	
 	// rods contain 1st mass and 2nd mass, connected to each other
@@ -124,6 +174,10 @@ window.onload = function() {
 				var vx = mass.x - mass.prevX;
 				var vy = mass.y - mass.prevY;
 
+				// get distance between ball and previous ball for spring physics
+				if(i != 0) {
+					var dist = distance(masses[i], masses[i-1]); 
+				}
 				// update old x and y to be the new x and y
 				mass.prevX = mass.x;
 				mass.prevY = mass.y;
@@ -132,6 +186,7 @@ window.onload = function() {
 				mass.x += vx;
 				mass.y += vy;
 				mass.y += gravity;
+
 			}
 			
 
