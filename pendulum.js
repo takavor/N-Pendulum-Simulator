@@ -1,49 +1,90 @@
 window.onload = function() {
 
 	var canvas = document.getElementById("canvas");
-	canvas.width = 600;
-	canvas.height = 500;
+	canvas.width = 800;
+	canvas.height = 700;
 
 	var context = canvas.getContext("2d");
 
-	// // set up select dropdown
-	// var select = document.getElementById("selectnum");
-	// for(var i = 1; i <= 7; i++) {
-	// 	var option = document.createElement('option');
-	// 	option.value = i;
-	// 	option.innerHTML = i;
-	// 	select.appendChild(option);
-	// }
+	// set up select dropdown
+	var select = document.getElementById("selectnum");
+	for(var i = 1; i <= 7; i++) {
+		var option = document.createElement('option');
+		option.value = i;
+		option.innerHTML = i;
+		select.appendChild(option);
+	}
 
 	// physics variables
 	var numOfMasses = 1;
-	var gravity = 0.05;
-	var radius = 10;
-	var bounce = 0.7;
-	
+	var gravity = 0.1;
+	var radius = 15;
+	var bounce = 0.99;
+
+	select.onchange = function() {
+		numOfMasses = select.value;
+		console.log("Num of pendulums: " + numOfMasses);
+	}
+
 	// masses contain x, y, old x, old y, and whether locked or not
 	var masses = [];
 	masses.push({
-		x: 100,
-		y: 130,
+		x: canvas.width/2,
+		y: 100,
 		prevX: 100,
-		prevY: 130,
+		prevY: 185,
+		locked: true
+	});
+	masses.push({
+		x: 160,
+		y: 200,
+		prevX: 200,
+		prevY: 250,
 		locked: false
 	});
 	masses.push({
-		x: 50,
-		y: 200,
-		prevX: 200,
-		prevY: 60,
-		locked: true
+		x: 160,
+		y: 300,
+		prevX: 158,
+		prevY: 302,
+		locked: false
 	});
-
+	masses.push({
+		x: 160,
+		y: 360,
+		prevX: 158,
+		prevY: 370,
+		locked: false
+	});
+	masses.push({
+		x: 160,
+		y: 450,
+		prevX: 158,
+		prevY: 470,
+		locked: false
+	});
+	
 	// rods contain 1st mass and 2nd mass, connected to each other
 	var rods = [];
 	rods.push({
 		mass0: masses[0],
 		mass1: masses[1],
 		length: distance(masses[0], masses[1])
+	});
+	rods.push({
+		mass0: masses[1],
+		mass1: masses[2],
+		length: distance(masses[1], masses[2])
+	});
+	rods.push({
+		mass0: masses[2],
+		mass1: masses[3],
+		length: distance(masses[2], masses[3])
+	});
+	rods.push({
+		mass0: masses[3],
+		mass1: masses[4],
+		length: distance(masses[3], masses[4])
 	});
 
 	function distance(mass0, mass1) {
@@ -103,6 +144,7 @@ window.onload = function() {
 	// so, push or pull masses closer to each other if this happens
 	function updateRods() {
 		for(var i = 0; i < rods.length; i++) {
+			
 			var rod = rods[i];
 
 			// keep consec. masses same distance apart
@@ -149,23 +191,45 @@ window.onload = function() {
 				// when mass touches right wall
 				// make current x = right wall
 				// make old x be outside of the wall so that x velocity is reversed
-				if(mass.x > canvas.width) {
-					mass.x = canvas.width;
+				if(mass.x > canvas.width - radius) {
+					mass.x = canvas.width - radius;
 					mass.prevX = mass.x + vx * bounce;
-				} else if(mass.x < 0) {
+				} else if(mass.x < radius) {
 					// same logic applies backwards
-					mass.x = 0;
+					mass.x = radius;
 					mass.prevX = mass.x + vx * bounce;
 				}
 
 				// same logic for y-bouncing
-				if(mass.y > canvas.height) {
-					mass.y = canvas.height;
+				if(mass.y > canvas.height - radius) {
+					mass.y = canvas.height - radius;
 					mass.prevY = mass.y + vy * bounce;
-				} else if(mass.y < 0) {
-					mass.y = 0;
+				} else if(mass.y < radius) {
+					mass.y = radius;
 					mass.prevY = mass.y + vy * bounce;
 				}
+
+				// // x-bouncing
+				// // when mass touches right wall
+				// // make current x = right wall
+				// // make old x be outside of the wall so that x velocity is reversed
+				// if(mass.x > canvas.width) {
+				// 	mass.x = canvas.width;
+				// 	mass.prevX = mass.x + vx * bounce;
+				// } else if(mass.x < 0) {
+				// 	// same logic applies backwards
+				// 	mass.x = 0;
+				// 	mass.prevX = mass.x + vx * bounce;
+				// }
+
+				// // same logic for y-bouncing
+				// if(mass.y > canvas.height) {
+				// 	mass.y = canvas.height;
+				// 	mass.prevY = mass.y + vy * bounce;
+				// } else if(mass.y < 0) {
+				// 	mass.y = 0;
+				// 	mass.prevY = mass.y + vy * bounce;
+				// }
 			}
 
 		}
