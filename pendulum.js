@@ -25,9 +25,9 @@ window.onload = function() {
 	// physics variables
 	var numOfMasses = 3;
 	var gravity = 0.1;
-	var radius = 20;
+	var radius = 10;
 	var bounce = 0.95;
-	var springConstant = 0.5;
+	var springConstant = 0.001;
 
 	select.onchange = function() {
 		numOfMasses = select.value;
@@ -39,36 +39,36 @@ window.onload = function() {
 	masses.push({
 		x: canvas.width/2,
 		y: 100,
-		prevX: 100,
-		prevY: 185,
+		prevX: canvas.width/2,
+		prevY: 101,
 		locked: true
 	});
 	masses.push({
-		x: 160,
+		x: canvas.width/2,
 		y: 200,
-		prevX: 200,
-		prevY: 250,
+		prevX: canvas.width/2 + 10,
+		prevY: 200,
 		locked: false
 	});
 	masses.push({
-		x: 160,
+		x: canvas.width/2,
 		y: 300,
-		prevX: 158,
-		prevY: 302,
+		prevX: canvas.width/2 + 15,
+		prevY: 300,
 		locked: false
 	});
 	masses.push({
-		x: 160,
+		x: canvas.width/2,
 		y: 360,
-		prevX: 158,
-		prevY: 370,
+		prevX: canvas.width/2,
+		prevY: 360,
 		locked: false
 	});
 	masses.push({
-		x: 160,
+		x: canvas.width/2,
 		y: 450,
-		prevX: 158,
-		prevY: 470,
+		prevX: canvas.width/2,
+		prevY: 450,
 		locked: false
 	});
 
@@ -200,36 +200,61 @@ window.onload = function() {
 	function updateRods() {
 		for(var i = 0; i < rods.length; i++) {
 			
+			// LOGIC FOR STIFF RODS
+			// var rod = rods[i];
+
+			// // keep consec. masses same distance apart
+			// var distX = rod.mass1.x - rod.mass0.x;
+			// var distY = rod.mass1.y - rod.mass0.y;
+			// var dist = Math.sqrt(distX*distX + distY*distY);
+
+			// // get difference of expected dist. and actual dist.
+			// var diff = rod.length - dist;
+
+			// // get offsets to add/sub on x and y axis to move the masses
+			// var offsetX = distX * (diff / dist / 2);
+			// var offsetY = distY * (diff / dist / 2);
+
+			// // add/sub offsets onto the masses
+			// // if one of the masses is locked and the other isn't,
+			// // the offset shouldn't be divided between the two masses
+			// if(!rod.mass0.locked && rod.mass1.locked) {
+			// 	rod.mass0.x -= 2 * offsetX;
+			// 	rod.mass0.y -= 2 * offsetY;
+			// } else if(rod.mass0.locked && !rod.mass1.locked) {
+			// 	rod.mass1.x += 2 * offsetX;
+			// 	rod.mass1.y += 2 * offsetY;
+			// } else if(!rod.mass0.locked && !rod.mass1.locked) {
+			// 	rod.mass0.x -= offsetX;
+			// 	rod.mass0.y -= offsetY;
+
+			// 	rod.mass1.x += offsetX;
+			// 	rod.mass1.y += offsetY;
+			// }
+
+			// LOGIC FOR SPRING RODS
 			var rod = rods[i];
 
-			// keep consec. masses same distance apart
 			var distX = rod.mass1.x - rod.mass0.x;
 			var distY = rod.mass1.y - rod.mass0.y;
-			var dist = Math.sqrt(distX*distX + distY*distY);
 
-			// get difference of expected dist. and actual dist.
-			var diff = rod.length - dist;
+			// calculate spring force components
+			var kX = -distX * springConstant;
+			var kY = -distY * springConstant;
 
-			// get offsets to add/sub on x and y axis to move the masses
-			var offsetX = distX * (diff / dist / 2);
-			var offsetY = distY * (diff / dist / 2);
-
-			// add/sub offsets onto the masses
-			// if one of the masses is locked and the other isn't,
-			// the offset shouldn't be divided between the two masses
-			if(!rod.mass0.locked && rod.mass1.locked) {
-				rod.mass0.x -= 2 * offsetX;
-				rod.mass0.y -= 2 * offsetY;
-			} else if(rod.mass0.locked && !rod.mass1.locked) {
-				rod.mass1.x += 2 * offsetX;
-				rod.mass1.y += 2 * offsetY;
-			} else if(!rod.mass0.locked && !rod.mass1.locked) {
-				rod.mass0.x -= offsetX;
-				rod.mass0.y -= offsetY;
-
-				rod.mass1.x += offsetX;
-				rod.mass1.y += offsetY;
+			// add corresponding forces
+			if(!rod.mass0.locked) {
+				rod.mass0.x -= kX;
+				rod.mass0.y -= kY;			
 			}
+
+			if(!rod.mass1.locked) {
+				rod.mass1.x += kX;
+				rod.mass1.y += kY;
+			}
+
+			// update rod length
+			rod.length = distance(rod.mass1, rod.mass0);
 
 		}
 	}
