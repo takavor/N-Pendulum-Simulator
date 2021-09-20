@@ -1,7 +1,7 @@
 // TODO
 /*
-	-drag feature (change mass pos and rod length)
-	-automate with input numb. of masses
+	-handle collisions between masses
+
 */
 
 window.onload = function() {
@@ -13,63 +13,107 @@ window.onload = function() {
 
 	var context = canvas.getContext("2d");
 
-	// set up select dropdown
-	var select = document.getElementById("selectnum");
+	// set up select dropdowns
+	var selectNum = document.getElementById("selectnum");
 	for(var i = 1; i <= 7; i++) {
-		var option = document.createElement('option');
+		var option = document.createElement("option");
 		option.value = i;
 		option.innerHTML = i;
-		select.appendChild(option);
+		selectNum.appendChild(option);
 	}
+
+	var selectRod = document.getElementById("selectrod");
+	var stiffOption = document.createElement("option");
+	stiffOption.value = "Stiff";
+	stiffOption.innerHTML = "Stiff";
+	selectRod.appendChild(stiffOption);
+	var springOption = document.createElement("option");
+	springOption.value = "Spring";
+	springOption.innerHTML = "Spring";
+	selectRod.appendChild(springOption);
 
 	// physics variables
-	var numOfMasses = 3;
+	var numOfMasses = 1;
 	var gravity = 0.1;
-	var radius = 10;
+	var radius = 15;
 	var bounce = 0.95;
-	var springConstant = 0.001;
+	var springConstant = 0.0005;
+	var dampening = 0.99999;
 
-	select.onchange = function() {
-		numOfMasses = select.value;
-		console.log("Num of pendulums: " + numOfMasses);
-	}
 
 	// masses contain x, y, old x, old y, and whether locked or not
 	var masses = [];
+	// this mass is the anchor mass (invisible)
 	masses.push({
 		x: canvas.width/2,
 		y: 100,
 		prevX: canvas.width/2,
-		prevY: 101,
+		prevY: 100,
 		locked: true
 	});
+
 	masses.push({
 		x: canvas.width/2,
 		y: 200,
-		prevX: canvas.width/2 + 10,
+		prevX: canvas.width/2 + 5,
 		prevY: 200,
 		locked: false
 	});
-	masses.push({
-		x: canvas.width/2,
-		y: 300,
-		prevX: canvas.width/2 + 15,
-		prevY: 300,
-		locked: false
-	});
-	masses.push({
-		x: canvas.width/2,
-		y: 360,
-		prevX: canvas.width/2,
-		prevY: 360,
-		locked: false
-	});
-	masses.push({
-		x: canvas.width/2,
-		y: 450,
-		prevX: canvas.width/2,
-		prevY: 450,
-		locked: false
+
+	selectNum.onchange = function() {
+
+		// difference = how many masses to add or remove	
+		// first element in masses isn't counted (anchor mass, invisible)
+		var prevNumMasses = masses.length -1;
+		var difference = selectNum.value - prevNumMasses;
+
+		// add more masses
+		if(difference > 0) {
+
+			// must add difference-number of masses
+			for(var i = 0; i < difference; i++) {
+				masses.push({
+					x: canvas.width/2,
+					y: masses[masses.length-1].y + 3*radius,
+					prevX: canvas.width/2,
+					prevY: masses[masses.length-1].y + 3*radius
+				});
+			}
+
+			// need to create difference-1 rods
+			// 1st rod starts from last mass before adding new ones
+			for(var i = prevNumMasses; i <= selectNum.value; i++) {
+				if(i != selectNum.value) {
+					rods.push({
+						mass0: masses[i],
+						mass1: masses[i+1],
+						length: distance(masses[i], masses[i+1])
+					});
+				}
+			}
+
+		} else if(difference < 0) {
+
+			// must remove difference-number of masses, starting from the last one
+			// difference is negative, splicing at a negative value
+			masses.splice(difference);
+
+			// remove the corresponding rods
+			rods.splice(difference);
+		}
+
+		numOfMasses = selectNum.value;
+
+	}
+
+	// reset button logic
+	document.getElementById("reset").addEventListener("click", function () {
+		masses.splice(2);
+		rods.splice(1);
+		selectNum.value = 1;
+		numOfMasses = 1;
+
+		selectRod.value = "Stiff";
 	});
 
 	// set transparent image as ghost image for dragging
@@ -88,7 +132,7 @@ window.onload = function() {
 		var pointerY = event.clientY;
 
 		// for each mass
-		for(var i = 0; i < masses.length; i++) {
+		for(var i = 1; i < masses.length; i++) {
 			var mass = masses[i];
 
 			var distX = pointerX - mass.x;
@@ -106,11 +150,6 @@ window.onload = function() {
 				mass.y += distY;
 			}
 
-			// update rod connecting this mass and its consecturive mass
-			if(i != 0) {
-				var neighbour = masses[i-1];
-
-			}
 		}
 	});
 	
@@ -120,21 +159,6 @@ window.onload = function() {
 		mass0: masses[0],
 		mass1: masses[1],
 		length: distance(masses[0], masses[1])
-	});
-	rods.push({
-		mass0: masses[1],
-		mass1: masses[2],
-		length: distance(masses[1], masses[2])
-	});
-	rods.push({
-		mass0: masses[2],
-		mass1: masses[3],
-		length: distance(masses[2], masses[3])
-	});
-	rods.push({
-		mass0: masses[3],
-		mass1: masses[4],
-		length: distance(masses[3], masses[4])
 	});
 
 	function distance(mass0, mass1) {
@@ -171,13 +195,13 @@ window.onload = function() {
 
 			// get directional velocities
 			if(!mass.locked) {
-				var vx = mass.x - mass.prevX;
-				var vy = mass.y - mass.prevY;
+				var vx = (mass.x - mass.prevX) * dampening;
+				var vy = (mass.y - mass.prevY) * dampening;
 
-				// get distance between ball and previous ball for spring physics
-				if(i != 0) {
-					var dist = distance(masses[i], masses[i-1]); 
-				}
+				// // get distance between ball and previous ball for spring physics
+				// if(i != 0) {
+				// 	var dist = distance(masses[i], masses[i-1]); 
+				// }
 				// update old x and y to be the new x and y
 				mass.prevX = mass.x;
 				mass.prevY = mass.y;
@@ -193,74 +217,82 @@ window.onload = function() {
 		}
 	}
 
-	// rod always has constant length
-	// if two connected masses move away or closer to each other,
-	// they will not respect the constant length constraint
-	// so, push or pull masses closer to each other if this happens
+	
 	function updateRods() {
 		for(var i = 0; i < rods.length; i++) {
 			
-			// LOGIC FOR STIFF RODS
-			// var rod = rods[i];
+			// logic for stiff rods
+			if(selectRod.value == "Stiff") {
+				var rod = rods[i];
 
-			// // keep consec. masses same distance apart
-			// var distX = rod.mass1.x - rod.mass0.x;
-			// var distY = rod.mass1.y - rod.mass0.y;
-			// var dist = Math.sqrt(distX*distX + distY*distY);
+				// rod always has constant length
+				// if two connected masses move away or closer to each other,
+				// they will not respect the constant length constraint
+				// so, push or pull masses closer to each other if this happens
 
-			// // get difference of expected dist. and actual dist.
-			// var diff = rod.length - dist;
+				// keep consec. masses same distance apart
+				var distX = rod.mass1.x - rod.mass0.x;
+				var distY = rod.mass1.y - rod.mass0.y;
+				var dist = Math.sqrt(distX*distX + distY*distY);
 
-			// // get offsets to add/sub on x and y axis to move the masses
-			// var offsetX = distX * (diff / dist / 2);
-			// var offsetY = distY * (diff / dist / 2);
+				// get difference of expected dist. and actual dist.
+				var diff = rod.length - dist;
 
-			// // add/sub offsets onto the masses
-			// // if one of the masses is locked and the other isn't,
-			// // the offset shouldn't be divided between the two masses
-			// if(!rod.mass0.locked && rod.mass1.locked) {
-			// 	rod.mass0.x -= 2 * offsetX;
-			// 	rod.mass0.y -= 2 * offsetY;
-			// } else if(rod.mass0.locked && !rod.mass1.locked) {
-			// 	rod.mass1.x += 2 * offsetX;
-			// 	rod.mass1.y += 2 * offsetY;
-			// } else if(!rod.mass0.locked && !rod.mass1.locked) {
-			// 	rod.mass0.x -= offsetX;
-			// 	rod.mass0.y -= offsetY;
+				// get offsets to add/sub on x and y axis to move the masses
+				var offsetX = distX * (diff / dist / 2);
+				var offsetY = distY * (diff / dist / 2);
 
-			// 	rod.mass1.x += offsetX;
-			// 	rod.mass1.y += offsetY;
-			// }
+				// add/sub offsets onto the masses
+				// if one of the masses is locked and the other isn't,
+				// the offset shouldn't be divided between the two masses
+				if(!rod.mass0.locked && rod.mass1.locked) {
+					rod.mass0.x -= 2 * offsetX;
+					rod.mass0.y -= 2 * offsetY;
+				} else if(rod.mass0.locked && !rod.mass1.locked) {
+					rod.mass1.x += 2 * offsetX;
+					rod.mass1.y += 2 * offsetY;
+				} else if(!rod.mass0.locked && !rod.mass1.locked) {
+					rod.mass0.x -= offsetX;
+					rod.mass0.y -= offsetY;
 
-			// LOGIC FOR SPRING RODS
-			var rod = rods[i];
-
-			var distX = rod.mass1.x - rod.mass0.x;
-			var distY = rod.mass1.y - rod.mass0.y;
-
-			// calculate spring force components
-			var kX = -distX * springConstant;
-			var kY = -distY * springConstant;
-
-			// add corresponding forces
-			if(!rod.mass0.locked) {
-				rod.mass0.x -= kX;
-				rod.mass0.y -= kY;			
+					rod.mass1.x += offsetX;
+					rod.mass1.y += offsetY;
+				}
 			}
 
-			if(!rod.mass1.locked) {
-				rod.mass1.x += kX;
-				rod.mass1.y += kY;
-			}
+			// logic for spring rods
+			else if(selectRod.value == "Spring") {
 
-			// update rod length
-			rod.length = distance(rod.mass1, rod.mass0);
+				var rod = rods[i];
+
+				var distX = rod.mass1.x - rod.mass0.x;
+				var distY = rod.mass1.y - rod.mass0.y;
+
+				// calculate spring force components
+				var kX = -distX * springConstant;
+				var kY = -distY * springConstant;
+
+				// add corresponding forces
+				if(!rod.mass0.locked) {
+					rod.mass0.x -= kX;
+					rod.mass0.y -= kY;			
+				}
+
+				if(!rod.mass1.locked) {
+					rod.mass1.x += kX;
+					rod.mass1.y += kY;
+				}
+
+				// update rod length
+				rod.length = distance(rod.mass1, rod.mass0);
+
+			}
 
 		}
 	}
 
 	function constrainMasses() {
-		for(var i = 0; i < masses.length; i++) {
+		for(var i = 1; i < masses.length; i++) {
 			var mass = masses[i];
 
 			if(!mass.locked) {
@@ -271,6 +303,7 @@ window.onload = function() {
 				// when mass touches right wall
 				// make current x = right wall
 				// make old x be outside of the wall so that x velocity is reversed
+				// same logic for the left wall
 				if(mass.x > canvas.width - radius) {
 					mass.x = canvas.width - radius;
 					mass.prevX = mass.x + vx * bounce;
@@ -280,7 +313,7 @@ window.onload = function() {
 					mass.prevX = mass.x + vx * bounce;
 				}
 
-				// same logic for y-bouncing
+				// similar logic for y-bouncing
 				if(mass.y > canvas.height - radius) {
 					mass.y = canvas.height - radius;
 					mass.prevY = mass.y + vy * bounce;
@@ -289,27 +322,7 @@ window.onload = function() {
 					mass.prevY = mass.y + vy * bounce;
 				}
 
-				// // x-bouncing
-				// // when mass touches right wall
-				// // make current x = right wall
-				// // make old x be outside of the wall so that x velocity is reversed
-				// if(mass.x > canvas.width) {
-				// 	mass.x = canvas.width;
-				// 	mass.prevX = mass.x + vx * bounce;
-				// } else if(mass.x < 0) {
-				// 	// same logic applies backwards
-				// 	mass.x = 0;
-				// 	mass.prevX = mass.x + vx * bounce;
-				// }
 
-				// // same logic for y-bouncing
-				// if(mass.y > canvas.height) {
-				// 	mass.y = canvas.height;
-				// 	mass.prevY = mass.y + vy * bounce;
-				// } else if(mass.y < 0) {
-				// 	mass.y = 0;
-				// 	mass.prevY = mass.y + vy * bounce;
-				// }
 			}
 
 		}
