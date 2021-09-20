@@ -1,7 +1,5 @@
-// TODO
 /*
-	-handle collisions between masses
-
+	By Sevag Baghdassarian (2021)
 */
 
 window.onload = function() {
@@ -175,7 +173,7 @@ window.onload = function() {
 		
 		// for better approximation and rigidity of rods,
 		// update rods and fix mass positions a few times per frame
-		for(var i = 0; i < 4; i++) {
+		for(var i = 0; i < 5; i++) {
 			updateRods();
 			constrainMasses();	
 		}	
@@ -198,10 +196,6 @@ window.onload = function() {
 				var vx = (mass.x - mass.prevX) * dampening;
 				var vy = (mass.y - mass.prevY) * dampening;
 
-				// // get distance between ball and previous ball for spring physics
-				// if(i != 0) {
-				// 	var dist = distance(masses[i], masses[i-1]); 
-				// }
 				// update old x and y to be the new x and y
 				mass.prevX = mass.x;
 				mass.prevY = mass.y;
@@ -322,8 +316,52 @@ window.onload = function() {
 					mass.prevY = mass.y + vy * bounce;
 				}
 
+				// detect collisions between masses
+				for(var j = 1; j < masses.length; j++) {
+
+					if(j != i) {
+
+						var mass2 = masses[j];
+
+						// if two masses are colliding
+						if(distance(mass, mass2) < 2*radius) {
+
+
+							// angle of collision: position vector between the two masses
+							// subtract collision vector and velocity vector
+							// project velocity onto result
+							// this will be the new velocity of the current mass
+							
+							// get collision direction
+							var collX = mass.x - mass2.x;
+							var collY = mass.y - mass2.y;
+
+							// do velocity - collision
+							var subX1 = vx - collX;
+							var subY1 = vy - collY;
+
+							// project velocity onto sub
+							// proj(sub) velocity = dot(sub, velocity) / (dot(sub, sub)) * sub
+							var dotProduct = subX1*vx + subY1*vy;
+							var factor = dotProduct / (subX1*subX1+ subY1*subY1);
+
+							var newVx1 = factor * subX1;
+							var newVy1 = factor * subY1;
+
+							mass.prevX = mass.x;
+							mass.prevY = mass.y;
+
+							mass.x -= newVx1;
+							mass.y -= newVy1;
+
+						}
+					}
+
+				}
+
 
 			}
+
 
 		}
 	}
