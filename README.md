@@ -3,6 +3,7 @@
 This is a simulation of multiple pendulums swinging from an anchor point using Verlet integration. Rods connecting masses may be:
 * Stiff rods
 * Spring rods,
+
 each displaying different physical behaviours. Collisions between surfaces, such as walls and individual masses, have also been implemented.
 
 ## Installation
