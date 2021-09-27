@@ -12,8 +12,10 @@ To run the simulation, clone the repository or download the project ZIP. Open th
 
 ## Verlet Integration
 
-I decided to use Verlet integration for simulation the movements of the masses. Instead of integrating on the basis of a time variable, this method allows the calculation of the velocity based on the position variables of a given frame. The velocity components on a given frame is:
+I decided to use Verlet integration for simulating the movements. This method allows for the calculation of the velocity of the current frame based on the position variables of the mass. The velocity of a mass on a given frame is:
 
-<img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
+<img src="https://latex.codecogs.com/svg.image?{v_{current}}^{}=&space;s_{current}&space;-&space;{}s_{previous}" title="{v_{current}}^{}= s_{current} - {}s_{previous}" />
+
+where `v` is the velocity vector of the mass, and `s` is the position vector. At each frame, the velocity of the mass is calculated, and the old and new positions of the mass are updated. Other forces, such as constraints between masses, dampening, and gravity, are also accounted for in the calculation. 
 
 ## Demo
