@@ -1,6 +1,6 @@
 # N-Pendulum Simulator
 
-This is a simulation of multiple pendulums swinging from an anchor point using Verlet integration. Rods connecting masses may be set to be either stiff or springy. Collisions between surfaces, such as walls and individual masses, have also been implemented. Dragging the masses with the mouse causes them to move, showing the chaotic nature of a multiple pendulum system.
+This is a simulation of multiple pendulums swinging from an anchor point using Verlet integration. Rods connecting masses may be set to be either stiff or springy. Collisions between surfaces, such as walls and individual masses, have also been implemented. Dragging the masses with the mouse causes a disturbance and makes them move, displaying the chaotic nature of a system with multiple pendulums.
 
 ## Running the Simulation
 
@@ -32,9 +32,9 @@ cd N-Pendulum-Simulator
 
 ## Verlet Integration
 
-I used Verlet integration for simulating the movements. The velocity of the current frame is the difference of the current position of the mass and its position on the previous frame:
+Verlet integration was used for simulating the movements. The velocity of a mass in the current frame is the difference of the position of the mass in the current frame and its position in the previous frame:
 
 <img src="https://latex.codecogs.com/svg.image?{v_{current}}^{}=&space;s_{current}&space;-&space;{}s_{previous}" title="{v_{current}}^{}= s_{current} - {}s_{previous}" />
 
-`v` is the velocity vector of the mass, and `s` is the position vector. At each frame, the velocity of the mass is calculated, and the old and new positions of the mass are updated. Other forces, such as constraints between masses, dampening, and gravity, are also accounted for in the calculation.
+`v` is the velocity vector of the mass, and `s` is the position vector. At each frame, the velocities of the masses are calculated, and the old and new positions of the masses are updated. Other forces, such as constraints between masses, dampening, and gravity, are also accounted for in the calculation.
 
