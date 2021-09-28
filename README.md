@@ -10,7 +10,7 @@ git clone https://github.com/takavor/N-Pendulum-Simulator.git
 cd N-Pendulum-Simulator
 ```
 
-## Demo
+## Demonstration
 
 ### Double pendulum (stiff and springy)
 <div>
