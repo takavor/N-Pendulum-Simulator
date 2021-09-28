@@ -65,6 +65,7 @@ window.onload = function() {
 		var prevNumMasses = masses.length -1;
 		var difference = selectNum.value - prevNumMasses;
 
+
 		// add more masses
 		if(difference > 0) {
 
@@ -345,8 +346,8 @@ window.onload = function() {
 							var dotProduct = subX1*vx + subY1*vy;
 							var factor = dotProduct / (subX1*subX1+ subY1*subY1);
 
-							var newVx1 = factor * subX1;
-							var newVy1 = factor * subY1;
+							var newVx1 = factor * subX1 * 1.1;
+							var newVy1 = factor * subY1 * 1.1;
 
 							mass.prevX = mass.x;
 							mass.prevY = mass.y;
