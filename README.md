@@ -2,7 +2,7 @@
 
 This is a simulation of multiple pendulums swinging from an anchor point using Verlet integration. Rods connecting masses may be set to be either stiff or springy. Collisions between surfaces, such as walls and individual masses, have also been implemented. Dragging the masses with the mouse causes a disturbance and makes them move, displaying the chaotic nature of a system with multiple pendulums.
 
-## Running the Simulation
+## Installation
 
 To run the simulation, clone the repository or download the project ZIP. Open the `index.html` file to start the simulation.
 ```linux
