@@ -14,20 +14,20 @@ cd N-Pendulum-Simulator
 
 ### Double pendulum (stiff and springy)
 <div>
-	<a href="https://gyazo.com/42417df7e9901028daeb07bab5066182"><img src="https://i.gyazo.com/42417df7e9901028daeb07bab5066182.gif" alt="Image from Gyazo" width="500"/></a>
-	<a href="https://gyazo.com/98039492b59edcbb097da933d23ae569"><img src="https://i.gyazo.com/98039492b59edcbb097da933d23ae569.gif" alt="Image from Gyazo" width="500"/></a>
+	<a href="https://gyazo.com/42417df7e9901028daeb07bab5066182"><img src="https://i.gyazo.com/42417df7e9901028daeb07bab5066182.gif" alt="Image from Gyazo" width="400"/></a>
+	<a href="https://gyazo.com/98039492b59edcbb097da933d23ae569"><img src="https://i.gyazo.com/98039492b59edcbb097da933d23ae569.gif" alt="Image from Gyazo" width="400"/></a>
 </div>
 
 ### Stiff rod multiple pendulum systems (undisurbed and disturbed)
 <div>
-	<a href="https://gyazo.com/1388407c0e0688b3ac9008f889f4f903"><img src="https://i.gyazo.com/1388407c0e0688b3ac9008f889f4f903.gif" alt="Image from Gyazo" width="500"/></a>
-	<a href="https://gyazo.com/71484bfb6dc863ecff358e0c768bc82d"><img src="https://i.gyazo.com/71484bfb6dc863ecff358e0c768bc82d.gif" alt="Image from Gyazo" width="500"/></a>
+	<a href="https://gyazo.com/1388407c0e0688b3ac9008f889f4f903"><img src="https://i.gyazo.com/1388407c0e0688b3ac9008f889f4f903.gif" alt="Image from Gyazo" width="400"/></a>
+	<a href="https://gyazo.com/71484bfb6dc863ecff358e0c768bc82d"><img src="https://i.gyazo.com/71484bfb6dc863ecff358e0c768bc82d.gif" alt="Image from Gyazo" width="400"/></a>
 </div>
 
 ### More disturbed springy pendulum systems
 <div>
-	<a href="https://gyazo.com/89473059a39770bbec66d807174742a0"><img src="https://i.gyazo.com/89473059a39770bbec66d807174742a0.gif" alt="Image from Gyazo" width="500"/></a>
-	<a href="https://gyazo.com/3e5ceffc52c8133183753f9a50c7ae08"><img src="https://i.gyazo.com/3e5ceffc52c8133183753f9a50c7ae08.gif" alt="Image from Gyazo" width="500"/></a>
+	<a href="https://gyazo.com/89473059a39770bbec66d807174742a0"><img src="https://i.gyazo.com/89473059a39770bbec66d807174742a0.gif" alt="Image from Gyazo" width="400"/></a>
+	<a href="https://gyazo.com/3e5ceffc52c8133183753f9a50c7ae08"><img src="https://i.gyazo.com/3e5ceffc52c8133183753f9a50c7ae08.gif" alt="Image from Gyazo" width="400"/></a>
 </div>
 
 ## Verlet Integration
