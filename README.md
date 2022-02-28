@@ -18,7 +18,7 @@ cd N-Pendulum-Simulator
 	<a href="https://gyazo.com/98039492b59edcbb097da933d23ae569"><img src="https://i.gyazo.com/98039492b59edcbb097da933d23ae569.gif" alt="Image from Gyazo" width="400"/></a>
 </div>
 
-### Stiff rod multiple pendulum systems (undisurbed and disturbed)
+### Stiff rod multiple pendulum systems (undisturbed and disturbed)
 <div>
 	<a href="https://gyazo.com/1388407c0e0688b3ac9008f889f4f903"><img src="https://i.gyazo.com/1388407c0e0688b3ac9008f889f4f903.gif" alt="Image from Gyazo" width="400"/></a>
 	<a href="https://gyazo.com/71484bfb6dc863ecff358e0c768bc82d"><img src="https://i.gyazo.com/71484bfb6dc863ecff358e0c768bc82d.gif" alt="Image from Gyazo" width="400"/></a>
